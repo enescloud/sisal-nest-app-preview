@@ -1,0 +1,1 @@
+{"version":3,"file":"pagination.response.d.ts","sourceRoot":"","sources":["../../../../../src/core/entities/pagination/pagination.response.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,QAAQ,EAAE,MAAM,iBAAiB,CAAC;AAE3C,qBAAa,kBAAkB,CAAC,CAAC;IAE/B,QAAQ,CAAC,IAAI,EAAE,CAAC,EAAE,CAAC;IAGnB,QAAQ,CAAC,IAAI,EAAE,QAAQ,CAAC;gBAEZ,IAAI,EAAE,CAAC,EAAE,EAAE,IAAI,EAAE,QAAQ;CAItC"}

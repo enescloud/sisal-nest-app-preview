@@ -1,0 +1,53 @@
+### Builder image ###
+FROM node:16 AS builder
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn generate
+RUN yarn build
+### Builder image ###
+
+### Base image ###
+FROM node:16 AS base
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY yarn.lock ./
+
+RUN yarn install
+
+COPY . .
+
+RUN yarn generate
+
+
+### Base image ###
+
+### Production image ###
+FROM node:16
+
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+COPY yarn.lock ./
+COPY docs ./docs
+
+
+RUN yarn install --prod
+
+COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /usr/src/app/node_modules/.prisma ./node_modules/.prisma
+RUN yarn generate
+
+CMD [ "yarn", "start:prod" ]
+### Production image ###

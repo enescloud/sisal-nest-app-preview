@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: myrootpassword
+      MYSQL_DATABASE: sisal_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: myadminpassword
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'mysql']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  sisal-app:
+    container_name: sisal-app
+    image: sisal-app:1.0.0
+    env_file:
+      - ../env/.env.dev
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile.dev.application
+    ports:
+      - '3003:3003'
+      - '9233:9233'
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ../src:/usr/src/app/src
+    healthcheck:
+      test: |
+        wget --no-cache --spider http://localhost:3003/v1/health || exit 1
+      start_period: 10s
+      interval: 60s
+      retries: 3
+      timeout: 60s
+    restart: unless-stopped
+    command: yarn start:debug
+
+volumes:
+  mysql-data:
